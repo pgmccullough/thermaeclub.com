@@ -10,6 +10,7 @@ import { Socket } from 'socket.io-client'
 import { connect } from './ws.client'
 import { wsContext } from './ws.context'
 import { useEffect, useState } from 'react'
+import '~/styles/style.css'
 
 export const links: LinksFunction = () => [
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
