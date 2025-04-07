@@ -1,0 +1,22 @@
+pre-commit:
+  parallel: true
+  commands:
+    check:
+      glob: "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx}"
+      run: npx biome check --apply --no-errors-on-unmatched --files-ignore-unknown=true "{staged_files}"
+    lint-fix:
+      glob: "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx}"
+      run: npx eslint --fix "{staged_files}"
+    prettier:
+      glob: "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx}"
+      run: npx prettier --write "{staged_files}"
+    # test:
+    #   glob: "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx}"
+    #   run: npx jest --findRelatedTests "{staged_files}"
+
+
+commit-msg:
+  commands:
+    "lint commit message":
+      run: npx --no-install commitlint --edit {1}
+      verbose: true
