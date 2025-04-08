@@ -87,7 +87,6 @@ export default function Index() {
             ...(isPhoneOrEmail === PhoneOrEmail.Phone ? { phone } : { email }),
           }),
         })
-        console.log('res', res)
 
         if (!res.ok) {
           const errorData = await res.json()
