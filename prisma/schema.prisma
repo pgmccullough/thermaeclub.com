@@ -10,8 +10,10 @@ datasource db {
 model Vip {
   id         Int      @id @default(autoincrement())
   firstName  String
-  lastName  String
-  email      String?
-  phone      String?
-  signedUp   DateTime @default(now())
+  lastName   String
+  email      String?   
+  emailHash  String?   @unique
+  phone      String?   
+  phoneHash  String?   @unique
+  signedUp   DateTime  @default(now())
 }

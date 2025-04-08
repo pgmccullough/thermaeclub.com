@@ -36,6 +36,11 @@ export default function Index() {
     email: '',
   })
 
+  const [formResponse, setFormResponse] = useState<{
+    outcome: 'success' | 'error' | null;
+    message: string;
+  }>({ outcome: null, message: '' })
+
   const handleToggle = (e: MouseEvent, phoneOrEmail: PhoneOrEmail) => {
     e.preventDefault()
     setFormData((prev) => ({ ...prev, phone: '', email: '' }))
@@ -88,12 +93,28 @@ export default function Index() {
           }),
         })
 
+        const response = await res.json()
+
         if (!res.ok) {
-          const errorData = await res.json()
-          throw new Error(errorData?.message || 'Something went wrong.')
+          setFormResponse({
+            outcome: 'error',
+            message:
+              'Something went wrong with your submission. Please try again.',
+          })
         }
 
-        alert('Thanks for joining! We’ll be in touch soon.')
+        if (response?.error) {
+          return setFormResponse({
+            outcome: 'error',
+            message: response?.error,
+          })
+        }
+
+        setFormResponse({
+          outcome: 'success',
+          message: `Thanks for signing up! Welcome to the club. And don't worry; 
+          we'll ${phone ? 'text' : 'email'} you sparingly, and only when it's really important.`,
+        })
         setFormData({
           firstName: '',
           lastName: '',
@@ -110,10 +131,12 @@ export default function Index() {
           errorMessage = error.message
         }
 
+        setFormResponse({ outcome: 'error', message: errorMessage })
+
         return Response.json({ error: errorMessage }, { status: 500 })
       }
     },
-    [formComplete, formData, PhoneOrEmail, isPhoneOrEmail],
+    [formComplete, formData, PhoneOrEmail, setFormResponse, isPhoneOrEmail],
   )
 
   return (
@@ -148,6 +171,15 @@ export default function Index() {
         </li>
       </ul>
       <h2>Join our VIP list for early updates</h2>
+      {formResponse?.outcome ? (
+        <div
+          className={`${styles.responseMessage} ${formResponse.outcome === 'error' ? styles.errorMessage : ''}`}
+        >
+          {formResponse.message}
+        </div>
+      ) : (
+        <></>
+      )}
       <form className={styles.newsletterForm} onSubmit={submitHandler}>
         <div className={styles.labelInputGroup}>
           <label

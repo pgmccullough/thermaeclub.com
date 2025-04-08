@@ -2,6 +2,10 @@ import crypto from 'crypto'
 
 const algorithm = 'aes-256-gcm'
 
+export function hash(text: string): string {
+  return crypto.createHash('sha256').update(text).digest('hex')
+}
+
 export function encrypt(text: string, secret: string): string {
   if (!secret) {
     throw new Error('Cannot encrypt without secret key')
@@ -31,18 +35,17 @@ export function encrypt(text: string, secret: string): string {
 }
 
 export function decrypt(data: string, secret: string): string {
+  if (!data || !data.includes(':')) return ''
   const [ivHex, tagHex, encryptedHex] = data.split(':')
   const iv = Buffer.from(ivHex, 'hex')
   const tag = Buffer.from(tagHex, 'hex')
   const encrypted = Buffer.from(encryptedHex, 'hex')
-
   const decipher = crypto.createDecipheriv(
     algorithm,
     Buffer.from(secret, 'hex'),
     iv,
   )
   decipher.setAuthTag(tag)
-
   const decrypted = Buffer.concat([
     decipher.update(encrypted),
     decipher.final(),
