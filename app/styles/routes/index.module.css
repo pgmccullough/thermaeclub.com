@@ -13,7 +13,7 @@
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
               0 10px 10px -5px rgba(0, 0, 0, 0.04);
   @media (min-width: 767px) {
-    margin-top: 0;;
+    margin-top: 0;
   }
   h2 {
     margin: 2rem 0 1rem 0;
@@ -67,10 +67,10 @@
       flex-direction: row;
     }
     .phoneEmailToggleWrapper {
+      position: relative;
       display: inline-flex;
       border: 1px #ccc solid;
       border-radius: 10px;
-      overflow: hidden;
       justify-content: flex-start;
       width: 200px;
       .phoneEmailToggle {
@@ -78,10 +78,12 @@
         font-size: 1.25rem;
         padding: 0.5rem 1.5rem;
         border: 0;
+        border-radius: 0 10px 10px 0;
         cursor: pointer;
       }
       .phoneEmailToggle:first-of-type {
         border-right: 1px #ccc solid;
+        border-radius: 10px 0 0 10px;
       }
       .phoneEmailToggleActive {
         background: #dddddd;
@@ -91,7 +93,7 @@
     .phoneEmailToggleWrapper::after {
       content: ' *';
       position: absolute;
-      left: calc(200px + 2.5rem);
+      left: calc(200px + 0.25rem);
     }
     .input {
       flex-grow: 2;
