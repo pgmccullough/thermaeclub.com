@@ -1,5 +1,5 @@
 import type { MetaFunction } from '@remix-run/node'
-import { MouseEvent, useCallback, useState } from 'react'
+import { MouseEvent, useCallback, useMemo, useState } from 'react'
 import styles from '~/styles/routes/index.module.css'
 
 export const meta: MetaFunction = () => {
@@ -38,8 +38,34 @@ export default function Index() {
 
   const handleToggle = (e: MouseEvent, phoneOrEmail: PhoneOrEmail) => {
     e.preventDefault()
+    setFormData((prev) => ({ ...prev, phone: '', email: '' }))
     setIsPhoneOrEmail(phoneOrEmail)
   }
+
+  const formComplete = useMemo(() => {
+    const { firstName, lastName, phone, email } = formData
+
+    const errorAt = []
+
+    if (!firstName.trim()) {
+      errorAt.push('firstName')
+    }
+
+    if (!lastName.trim()) {
+      errorAt.push('lastName')
+    }
+
+    if (isPhoneOrEmail === PhoneOrEmail.Phone && !phone?.trim()) {
+      errorAt.push('phone')
+    }
+
+    if (isPhoneOrEmail === PhoneOrEmail.Email && !email?.trim()) {
+      errorAt.push('email')
+    }
+
+    if (errorAt.length) return { formComplete: false, errorAt: errorAt }
+    return { formComplete: true, errorAt: [] }
+  }, [formData, PhoneOrEmail, isPhoneOrEmail])
 
   const submitHandler = useCallback(
     async (e: React.FormEvent<HTMLFormElement>) => {
@@ -47,20 +73,7 @@ export default function Index() {
 
       const { firstName, lastName, phone, email } = formData
 
-      if (!firstName.trim() || !lastName.trim()) {
-        alert('First and last name are required.')
-        return
-      }
-
-      if (isPhoneOrEmail === PhoneOrEmail.Phone && !phone?.trim()) {
-        alert('Phone number is required.')
-        return
-      }
-
-      if (isPhoneOrEmail === PhoneOrEmail.Email && !email?.trim()) {
-        alert('Email is required.')
-        return
-      }
+      if (!formComplete.formComplete) return
 
       try {
         const res = await fetch('/api/vip', {
@@ -101,7 +114,7 @@ export default function Index() {
         return Response.json({ error: errorMessage }, { status: 500 })
       }
     },
-    [formData, PhoneOrEmail, isPhoneOrEmail],
+    [formComplete, formData, PhoneOrEmail, isPhoneOrEmail],
   )
 
   return (
@@ -137,96 +150,110 @@ export default function Index() {
       </ul>
       <h2>Join our VIP list for early updates</h2>
       <form className={styles.newsletterForm} onSubmit={submitHandler}>
-        <label
-          htmlFor="firstName"
-          className={`${styles.label} ${styles.required}`}
-        >
-          First name *
-        </label>
-        <input
-          className={styles.input}
-          type="text"
-          id="firstName"
-          name="firstName"
-          value={formData.firstName}
-          onChange={(e) =>
-            setFormData((prev) => ({ ...prev, firstName: e.target.value }))
-          }
-        />
-
-        <label
-          htmlFor="lastName"
-          className={`${styles.label} ${styles.required}`}
-        >
-          Last name *
-        </label>
-        <input
-          className={styles.input}
-          type="text"
-          id="lastName"
-          name="lastName"
-          value={formData.lastName}
-          onChange={(e) =>
-            setFormData((prev) => ({ ...prev, lastName: e.target.value }))
-          }
-        />
-
-        <div className={styles.phoneEmailToggleWrapper}>
-          <button
-            className={`${styles.phoneEmailToggle} ${isPhoneOrEmail === PhoneOrEmail.Phone ? styles.phoneEmailToggleActive : ''}`}
-            onClick={(e) => handleToggle(e, PhoneOrEmail.Phone)}
+        <div className={styles.labelInputGroup}>
+          <label
+            htmlFor="firstName"
+            className={`${styles.label} ${styles.required}`}
           >
-            Phone
-          </button>
-          <button
-            className={`${styles.phoneEmailToggle} ${isPhoneOrEmail === PhoneOrEmail.Email ? styles.phoneEmailToggleActive : ''}`}
-            onClick={(e) => handleToggle(e, PhoneOrEmail.Email)}
+            First name *
+          </label>
+          <input
+            className={styles.input}
+            type="text"
+            id="firstName"
+            name="firstName"
+            placeholder="Your first name"
+            value={formData.firstName}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, firstName: e.target.value }))
+            }
+          />
+        </div>
+        <div className={styles.labelInputGroup}>
+          <label
+            htmlFor="lastName"
+            className={`${styles.label} ${styles.required}`}
           >
-            Email
-          </button>
+            Last name *
+          </label>
+          <input
+            className={styles.input}
+            type="text"
+            id="lastName"
+            name="lastName"
+            placeholder="Your last name"
+            value={formData.lastName}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, lastName: e.target.value }))
+            }
+          />
+        </div>
+        <div className={styles.phoneEmailGroup}>
+          <div className={styles.phoneEmailToggleWrapper}>
+            <button
+              className={`${styles.phoneEmailToggle} ${isPhoneOrEmail === PhoneOrEmail.Phone ? styles.phoneEmailToggleActive : ''}`}
+              onClick={(e) => handleToggle(e, PhoneOrEmail.Phone)}
+            >
+              Phone
+            </button>
+            <button
+              className={`${styles.phoneEmailToggle} ${isPhoneOrEmail === PhoneOrEmail.Email ? styles.phoneEmailToggleActive : ''}`}
+              onClick={(e) => handleToggle(e, PhoneOrEmail.Email)}
+            >
+              Email
+            </button>
+          </div>
+
+          {isPhoneOrEmail === PhoneOrEmail.Phone ? (
+            <>
+              <label
+                htmlFor="phone"
+                className={`${styles.label} ${styles.required} ${styles.hidden}`}
+              >
+                Phone *
+              </label>
+              <input
+                className={styles.input}
+                type="text"
+                id="phone"
+                name="phone"
+                placeholder="Your phone number"
+                value={formData.phone}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, phone: e.target.value }))
+                }
+              />
+            </>
+          ) : (
+            <>
+              <label
+                htmlFor="email"
+                className={`${styles.label} ${styles.required} ${styles.hidden}`}
+              >
+                Email *
+              </label>
+              <input
+                className={styles.input}
+                type="email"
+                id="email"
+                name="email"
+                placeholder="Your email"
+                value={formData.email}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, email: e.target.value }))
+                }
+              />
+            </>
+          )}
         </div>
 
-        {isPhoneOrEmail === PhoneOrEmail.Phone ? (
-          <>
-            <label
-              htmlFor="phone"
-              className={`${styles.label} ${styles.required}`}
-            >
-              Phone *
-            </label>
-            <input
-              className={styles.input}
-              type="text"
-              id="phone"
-              name="phone"
-              value={formData.phone}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, phone: e.target.value }))
-              }
-            />
-          </>
-        ) : (
-          <>
-            <label
-              htmlFor="email"
-              className={`${styles.label} ${styles.required}`}
-            >
-              Email *
-            </label>
-            <input
-              className={styles.input}
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, email: e.target.value }))
-              }
-            />
-          </>
-        )}
-
-        <button type="submit">Sign up</button>
+        <button
+          type="submit"
+          className={styles.submit}
+          disabled={!formComplete.formComplete}
+        >
+          Sign up
+        </button>
       </form>
     </main>
   )

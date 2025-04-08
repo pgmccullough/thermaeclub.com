@@ -21,31 +21,68 @@
 }
 
 .newsletterForm {
-  font-size: 1rem;
-  .label {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  font-size: 1.25rem;
+  width: 100%;
+  .labelInputGroup {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    .label {
+      width: 200px;
+    }
+    .required {
 
+    }
+    .input {
+      flex-grow: 2;
+      font-size: 1.25rem;
+      padding: 0.5rem;
+    }
   }
-  .input {
-
+  .phoneEmailGroup {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    .phoneEmailToggleWrapper {
+      display: inline-flex;
+      border: 1px #ccc solid;
+      border-radius: 10px;
+      overflow: hidden;
+      justify-content: flex-start;
+      width: 200px;
+      .phoneEmailToggle {
+        width: 100%;
+        font-size: 1.25rem;
+        padding: 0.5rem 1.5rem;
+        border: 0;
+        cursor: pointer;
+      }
+      .phoneEmailToggle:first-of-type {
+        border-right: 1px #ccc solid;
+      }
+      .phoneEmailToggleActive {
+        background: #dddddd;
+        box-shadow: inset 0 0 6px 0 #ccc;
+      }
+    }
+    .input {
+      flex-grow: 2;
+      font-size: 1.25rem;
+      padding: 0.5rem;
+    }
+    .hidden {
+      display: none;
+    }
   }
-  .phoneEmailToggleWrapper {
-    display: inline-flex;
+  .submit {
+    width: 100%;
+    font-size: 1.25rem;
+    padding: 0.5rem 1.5rem;
     border: 1px #ccc solid;
     border-radius: 10px;
-    overflow: hidden;
-    justify-content: flex-start;
-    .phoneEmailToggle {
-      padding: 0.5rem 1.5rem;
-      background: #eee;
-      border: 0;
-      cursor: pointer;
-    }
-    .phoneEmailToggle:first-of-type {
-      border-right: 1px #ccc solid;
-    }
-    .phoneEmailToggleActive {
-      background: #dddddd;
-      box-shadow: inset 0 0 6px 0 #ccc;
-    }
+    cursor: pointer;
   }
 }
