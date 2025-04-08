@@ -11,6 +11,7 @@ import { connect } from './ws.client'
 import { wsContext } from './ws.context'
 import { useEffect, useState } from 'react'
 import '~/styles/style.css'
+import { Fathom } from './components/Fathom/Fathom'
 
 export const links: LinksFunction = () => [
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -52,6 +53,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
+        <Fathom />
         {children}
         <ScrollRestoration />
         <Scripts />
