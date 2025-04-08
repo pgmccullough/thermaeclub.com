@@ -12,6 +12,7 @@
     "typecheck": "tsc"
   },
   "dependencies": {
+    "@prisma/client": "^6.5.0",
     "@remix-run/node": "^2.16.1",
     "@remix-run/react": "^2.16.1",
     "@remix-run/serve": "^2.16.1",
@@ -19,6 +20,7 @@
     "express": "^4.21.2",
     "isbot": "^4.1.0",
     "morgan": "^1.10.0",
+    "prisma": "^6.5.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "socket.io": "^4.8.1",

@@ -19,3 +19,33 @@
     line-height: 2rem;
   }
 }
+
+.newsletterForm {
+  font-size: 1rem;
+  .label {
+
+  }
+  .input {
+
+  }
+  .phoneEmailToggleWrapper {
+    display: inline-flex;
+    border: 1px #ccc solid;
+    border-radius: 10px;
+    overflow: hidden;
+    justify-content: flex-start;
+    .phoneEmailToggle {
+      padding: 0.5rem 1.5rem;
+      background: #eee;
+      border: 0;
+      cursor: pointer;
+    }
+    .phoneEmailToggle:first-of-type {
+      border-right: 1px #ccc solid;
+    }
+    .phoneEmailToggleActive {
+      background: #dddddd;
+      box-shadow: inset 0 0 6px 0 #ccc;
+    }
+  }
+}
