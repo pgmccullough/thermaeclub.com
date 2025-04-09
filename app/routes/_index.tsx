@@ -1,6 +1,8 @@
 import type { MetaFunction } from '@remix-run/node'
 import { MouseEvent, useCallback, useMemo, useState } from 'react'
 import styles from '~/styles/routes/index.module.css'
+import { formatPhone } from '~/util/tools/form/formatPhone'
+import { validateVIPForm } from '~/util/tools/form/validateVIP'
 
 export const meta: MetaFunction = () => {
   return [
@@ -41,36 +43,20 @@ export default function Index() {
     message: string;
   }>({ outcome: null, message: '' })
 
+  const [rawPhone, setRawPhone] = useState<string>('')
+
   const handleToggle = (e: MouseEvent, phoneOrEmail: PhoneOrEmail) => {
     e.preventDefault()
     setFormData((prev) => ({ ...prev, phone: '', email: '' }))
     setIsPhoneOrEmail(phoneOrEmail)
   }
 
-  const formComplete = useMemo(() => {
-    const { firstName, lastName, phone, email } = formData
+  const formComplete = useMemo(
+    () => validateVIPForm(formData, isPhoneOrEmail),
+    [formData, isPhoneOrEmail],
+  )
 
-    const errorAt = []
-
-    if (!firstName.trim()) {
-      errorAt.push('firstName')
-    }
-
-    if (!lastName.trim()) {
-      errorAt.push('lastName')
-    }
-
-    if (isPhoneOrEmail === PhoneOrEmail.Phone && !phone?.trim()) {
-      errorAt.push('phone')
-    }
-
-    if (isPhoneOrEmail === PhoneOrEmail.Email && !email?.trim()) {
-      errorAt.push('email')
-    }
-
-    if (errorAt.length) return { formComplete: false, errorAt: errorAt }
-    return { formComplete: true, errorAt: [] }
-  }, [formData, PhoneOrEmail, isPhoneOrEmail])
+  const formattedPhone = useMemo(() => formatPhone(rawPhone), [rawPhone])
 
   const submitHandler = useCallback(
     async (e: React.FormEvent<HTMLFormElement>) => {
@@ -249,10 +235,8 @@ export default function Index() {
                 id="phone"
                 name="phone"
                 placeholder="Your phone number"
-                value={formData.phone}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, phone: e.target.value }))
-                }
+                value={formattedPhone}
+                onChange={(e) => setRawPhone(e.target.value)}
               />
             </>
           ) : (
