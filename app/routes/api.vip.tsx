@@ -35,7 +35,7 @@ export async function action({ request }: ActionFunctionArgs) {
       )
     }
 
-    const checkForUser = await userExists({ email, phone })
+    const checkForUser = await userExists(prisma, { email, phone })
     if (checkForUser) {
       return Response.json(
         {

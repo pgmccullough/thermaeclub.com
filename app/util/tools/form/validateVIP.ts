@@ -13,7 +13,6 @@ export function validateVIPForm(
 ): { formComplete: boolean; errorAt: string[] } {
   const { firstName, lastName, phone, email } = formData
   const errorAt = []
-
   if (!firstName.trim()) errorAt.push('firstName')
   if (!lastName.trim()) errorAt.push('lastName')
 

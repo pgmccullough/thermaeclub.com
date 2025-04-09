@@ -1,5 +1,5 @@
 import type { MetaFunction } from '@remix-run/node'
-import { MouseEvent, useCallback, useMemo, useState } from 'react'
+import { MouseEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import styles from '~/styles/routes/index.module.css'
 import { formatPhone } from '~/util/tools/form/formatPhone'
 import { validateVIPForm } from '~/util/tools/form/validateVIP'
@@ -51,18 +51,23 @@ export default function Index() {
     setIsPhoneOrEmail(phoneOrEmail)
   }
 
+  const formattedPhone = useMemo(() => formatPhone(rawPhone), [rawPhone])
+
   const formComplete = useMemo(
-    () => validateVIPForm(formData, isPhoneOrEmail),
-    [formData, isPhoneOrEmail],
+    () =>
+      validateVIPForm({ ...formData, phone: formattedPhone }, isPhoneOrEmail),
+    [formData, formattedPhone, isPhoneOrEmail],
   )
 
-  const formattedPhone = useMemo(() => formatPhone(rawPhone), [rawPhone])
+  useEffect(() => {
+    setFormData((prev) => ({ ...prev, phone: formattedPhone }))
+  }, [formattedPhone, setFormData])
 
   const submitHandler = useCallback(
     async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault()
 
-      const { firstName, lastName, phone, email } = formData
+      const { firstName, lastName, email } = formData
 
       if (!formComplete.formComplete) return
 
@@ -75,7 +80,9 @@ export default function Index() {
           body: JSON.stringify({
             firstName,
             lastName,
-            ...(isPhoneOrEmail === PhoneOrEmail.Phone ? { phone } : { email }),
+            ...(isPhoneOrEmail === PhoneOrEmail.Phone
+              ? { phone: formattedPhone }
+              : { email }),
           }),
         })
 
@@ -99,7 +106,7 @@ export default function Index() {
         setFormResponse({
           outcome: 'success',
           message: `Thanks for signing up! Welcome to the club. And don't worry; 
-          we'll ${phone ? 'text' : 'email'} you sparingly, and only when it's really important.`,
+          we'll ${formattedPhone ? 'text' : 'email'} you sparingly, and only when it's really important.`,
         })
         setFormData({
           firstName: '',
@@ -107,6 +114,7 @@ export default function Index() {
           phone: '',
           email: '',
         })
+        setRawPhone('')
       } catch (error: unknown) {
         console.error('DB error:', error)
 
@@ -122,7 +130,14 @@ export default function Index() {
         return Response.json({ error: errorMessage }, { status: 500 })
       }
     },
-    [formComplete, formData, PhoneOrEmail, setFormResponse, isPhoneOrEmail],
+    [
+      formattedPhone,
+      formComplete,
+      formData,
+      PhoneOrEmail,
+      setFormResponse,
+      isPhoneOrEmail,
+    ],
   )
 
   return (
