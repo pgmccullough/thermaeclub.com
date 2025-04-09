@@ -25,9 +25,15 @@ const BUILD_DIR = path.join(process.cwd(), 'server/build')
 
 const app = express()
 const httpServer = createServer(app)
+
+const allowedOrigin = [
+  process.env.SERVER_URL || 'http://localhost:5173',
+  process.env.WS_SERVER_URL || 'http://localhost:3000',
+]
+
 export const io = new Server(httpServer, {
   cors: {
-    origin: ['http://localhost:5173', 'http://localhost:3000'],
+    origin: allowedOrigin,
     methods: ['GET', 'POST'],
     credentials: true,
   },
