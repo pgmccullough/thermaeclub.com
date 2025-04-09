@@ -4,6 +4,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
 } from '@remix-run/react'
 import type { LinksFunction } from '@remix-run/node'
 import { Socket } from 'socket.io-client'
@@ -44,6 +45,7 @@ export const links: LinksFunction = () => [
 ]
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const data = useLoaderData<typeof loader>()
   return (
     <html lang="en">
       <head>
@@ -55,6 +57,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <body>
         <Fathom />
         {children}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.ENV = ${JSON.stringify(data.ENV)};`,
+          }}
+        />
         <ScrollRestoration />
         <Scripts />
       </body>
@@ -78,4 +85,12 @@ export default function App() {
       <Outlet />
     </wsContext.Provider>
   )
+}
+
+export async function loader() {
+  return Response.json({
+    ENV: {
+      WS_SERVER_URL: process.env.WS_SERVER_URL,
+    },
+  })
 }
