@@ -1,6 +1,8 @@
 import type { ActionFunctionArgs } from '@remix-run/node'
 import { userExists } from '~/util/prisma/controllers/vip.controller'
 import { prisma } from '~/util/prisma/db.server'
+import { sendEmail } from '~/util/tools/comms/sendEmail'
+import { sendSMS } from '~/util/tools/comms/sendSMS'
 import { encrypt, hash } from '~/util/tools/encryption/encryption'
 
 const { CRYPT_SECRET } = process.env
@@ -57,6 +59,34 @@ export async function action({ request }: ActionFunctionArgs) {
         },
       })
 
+      if (email) {
+        try {
+          const emailRes = await sendEmail({
+            to: email,
+            subject: 'Welcome to Thermae\'s VIP List',
+            body: 'Thanks for signing up. We will be in touch.',
+          })
+
+          console.log('emailRes', emailRes)
+        } catch (err) {
+          console.error('Error sending email: ', err)
+        }
+      }
+
+      if (phone) {
+        const e164Phone = `+${phone.replace(/\D/g, '')}`
+        console.log('sending SMS to ', e164Phone)
+        try {
+          const smsRes = await sendSMS({
+            phoneNumber: e164Phone,
+            message:
+              'Welcome to Thermae\'s VIP club! We will text you updates when they become available.',
+          })
+          console.log(smsRes)
+        } catch (err) {
+          console.error('Error sending SMS: ', err)
+        }
+      }
       return Response.json({ success: true })
     } catch (error) {
       console.error('DB error:', error)

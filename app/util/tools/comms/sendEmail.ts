@@ -1,8 +1,6 @@
-import AWS from 'aws-sdk'
+import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses'
 
-const ses = new AWS.SES({
-  region: 'us-east-1',
-})
+const sesClient = new SESClient({ region: 'us-east-1' })
 
 export const sendEmail = async ({
   to,
@@ -13,7 +11,7 @@ export const sendEmail = async ({
   subject: string;
   body: string;
 }) => {
-  const params = {
+  const command = new SendEmailCommand({
     Destination: {
       ToAddresses: [to],
     },
@@ -28,10 +26,10 @@ export const sendEmail = async ({
       },
     },
     Source: 'salve@thermaeclub.com',
-  }
+  })
 
   try {
-    const result = await ses.sendEmail(params).promise()
+    const result = await sesClient.send(command)
     console.log('Email sent successfully:', result)
     return result
   } catch (error) {

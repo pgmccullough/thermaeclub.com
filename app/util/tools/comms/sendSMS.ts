@@ -1,8 +1,6 @@
-import AWS from 'aws-sdk'
+import { SNSClient, PublishCommand } from '@aws-sdk/client-sns'
 
-const sns = new AWS.SNS({
-  region: 'us-east-1',
-})
+const snsClient = new SNSClient({ region: 'us-east-1' })
 
 export const sendSMS = async ({
   phoneNumber,
@@ -11,13 +9,13 @@ export const sendSMS = async ({
   phoneNumber: string;
   message: string;
 }) => {
-  const params = {
+  const command = new PublishCommand({
     Message: message,
-    PhoneNumber: phoneNumber, // format +1XXX5550100
-  }
+    PhoneNumber: phoneNumber,
+  })
 
   try {
-    const result = await sns.publish(params).promise()
+    const result = await snsClient.send(command)
     console.log('SMS sent successfully:', result)
     return result
   } catch (error) {
