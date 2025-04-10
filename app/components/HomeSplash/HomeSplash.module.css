@@ -5,12 +5,8 @@
   .overlay {
     position: fixed;
     left: 50%;
-    top: 45%;
-    transform: translateX(-50%);
-    @media only screen and (min-width: 768px) {
-      top: 50%;
-      transform: translateY(-50%);
-    }
+    top: 50%;
+    transform: translate(-50%, -50%);
     .logo {
       img {
         width: 100%;
