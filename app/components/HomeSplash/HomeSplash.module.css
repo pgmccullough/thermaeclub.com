@@ -1,0 +1,16 @@
+.homeSplash {
+  width: 100vw;
+  height: 100vh;
+  background: #333;
+  .overlay {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    .logo {
+      img {
+        width: 100%;
+      }
+    }
+  }
+}

@@ -1,0 +1,150 @@
+@import '../../styles/partials/keyframes/mobileMenu/keyframes.css';
+
+.header {
+  position: fixed;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  left: 0rem;
+  top: 0rem;
+  width: 100%;
+  padding: 1rem;
+  z-index: 10;
+  .menuButton {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: Poppins, Verdana, Geneva, Tahoma, sans-serif;
+    background-color: transparent;
+    border: none;
+    color: #fff;
+    padding: 0.25rem 1rem 0.25rem 0.25rem;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.25s;
+    .menuIcon {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 2rem;
+      height: 2rem;
+      border-radius: 10px;
+      .menuIconLine {
+        width: 1.25rem;
+        height: 2px;
+        background: #fff;
+        position: absolute;
+      }
+      .mil1 {
+        top: 7px;
+      }
+      .mil2 {
+        top: 15px;
+      }
+      .mil3 {
+        top: 23px;
+      }
+    }
+    .menuIconExpanded {
+      .mil1 {
+        top: 7px;
+        animation: m1TransformToClose 1s forwards;
+      }
+      .mil2 {
+        top: 15px;
+        animation: m2TransformToClose 1s forwards;
+      }
+      .mil3 {
+        top: 23px;
+        animation: m3TransformToClose 1s forwards;
+      }
+    }
+    .menuIconContracted {
+      .mil1 {
+        top: 15px;
+        animation: m1TransformToOpen 1s forwards;
+      }
+      .mil2 {
+        top: 15px;
+        animation: m2TransformToOpen 1s forwards;
+      }
+      .mil3 {
+        top: 15px;
+        animation: m3TransformToOpen 1s forwards;
+      }
+    }
+  }
+  .menuButton:hover {
+    background-color: rgba(255,255,255,0.1);
+  }
+  .socialLinks {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    .socialIcon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 2.5rem;
+      width: 2.5rem;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: 0.25s;
+      img {
+        height: 1.5rem;
+      }
+    }
+    .socialIcon:hover {
+      background-color: rgba(255,255,255,0.1);
+    }
+    .socialIconX {
+      img {
+        height: 1rem;
+      }
+    }
+  }
+}
+
+.menuBlurOverlay {
+  visibility: hidden;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  z-index: 5;
+  border: none;
+  background-color: transparent;
+  backdrop-filter: blur(10px);
+}
+
+.menuBlurOverlayOn {
+  visibility: hidden;
+  opacity: 0;
+  animation: showBlur 1s forwards;
+}
+
+.menuBlurOverlayOff {
+  display: block;
+  opacity: 1;
+  animation: hideBlur 1s forwards;
+}
+
+.menu {
+  position: fixed;
+  top: 0;
+  left: calc(-50vw - 10rem);
+  height: 100vh;
+  width: calc(50vw + 10rem);
+  z-index: 6;
+  background-color: #D4AF37;
+}
+
+.menuContracted {
+  left: 0;
+  animation: contractMenu 1s forwards;
+}
+
+.menuExpanded {
+  left: calc(-50vw - 10rem);
+  animation: expandMenu 1s forwards;
+}
