@@ -1,17 +1,33 @@
+import { useScroll } from '~/util/hooks/useScroll'
+import { useWindowSize } from '~/util/hooks/useWindowSize'
 import xIcon from './social_icons/x.svg'
 import instaIcon from './social_icons/instagram.svg'
 import pinterestIcon from './social_icons/pinterest.svg'
 import tiktokIcon from './social_icons/tiktok.svg'
 import youTubeIcon from './social_icons/youtube.svg'
 import styles from './Header.module.css'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export const Header = () => {
+  const scrollPosition = useScroll()
+  const [, windowHeight] = useWindowSize()
+
   const [menuExpanded, setMenuExpanded] = useState<boolean | null>(null)
+  const [headerBGOpacity, setHeaderBGOpacity] = useState<number>(0)
+
+  useEffect(() => {
+    const opacityCalc = scrollPosition / windowHeight / 10
+    setHeaderBGOpacity(
+      opacityCalc < 0 ? 0 : opacityCalc > 0.25 ? 0.25 : opacityCalc,
+    )
+  }, [scrollPosition, setHeaderBGOpacity, windowHeight])
 
   return (
     <>
-      <header className={styles.header}>
+      <header
+        className={styles.header}
+        style={{ backgroundColor: `rgba(0,0,0,${headerBGOpacity})` }}
+      >
         <button
           className={styles.menuButton}
           onClick={() => setMenuExpanded((prev) => !prev)}
