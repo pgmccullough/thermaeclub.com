@@ -1,9 +1,11 @@
 import type { ActionFunctionArgs } from '@remix-run/node'
-import { userExists } from '~/util/prisma/controllers/vip.controller'
+import {
+  createVIP,
+  userExists,
+} from '~/util/prisma/controllers/vip.controller'
 import { prisma } from '~/util/prisma/db.server'
 import { sendEmail } from '~/util/tools/comms/sendEmail'
 import { sendSMS } from '~/util/tools/comms/sendSMS'
-import { encrypt, hash } from '~/util/tools/encryption/encryption'
 
 const { CRYPT_SECRET } = process.env
 
@@ -48,15 +50,12 @@ export async function action({ request }: ActionFunctionArgs) {
     }
 
     try {
-      await prisma.vip.create({
-        data: {
-          firstName: encrypt(firstName, CRYPT_SECRET),
-          lastName: encrypt(lastName, CRYPT_SECRET),
-          email: email ? encrypt(email, CRYPT_SECRET) : undefined,
-          emailHash: email ? hash(email) : undefined,
-          phone: phone ? encrypt(phone, CRYPT_SECRET) : undefined,
-          phoneHash: phone ? hash(phone) : undefined,
-        },
+      await createVIP(prisma, {
+        firstName,
+        lastName,
+        email,
+        phone,
+        CRYPT_SECRET,
       })
 
       if (email) {

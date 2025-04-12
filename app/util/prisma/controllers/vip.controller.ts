@@ -1,9 +1,21 @@
 import type { PrismaClient } from '@prisma/client'
-import { hash } from '~/util/tools/encryption/encryption'
-// import { prisma } from '../db.server'
+import { encrypt, hash } from '~/util/tools/encryption/encryption'
+
+export type TxClient = Omit<
+  PrismaClient,
+  '$connect' | '$disconnect' | '$on' | '$transaction' | '$use' | '$extends'
+>;
+
+export type CreateVIPArgs = {
+  firstName: string;
+  lastName: string;
+  email?: string;
+  phone?: string;
+  CRYPT_SECRET: string;
+};
 
 export async function userExists(
-  prisma: PrismaClient,
+  prisma: TxClient,
   {
     email,
     phone,
@@ -33,30 +45,17 @@ export async function userExists(
   return Boolean(vip)
 }
 
-// export async function userExists({
-//   email,
-//   phone,
-// }: {
-//   email?: string;
-//   phone?: string;
-// }): Promise<boolean> {
-//   if (!email && !phone) return false
+export async function createVIP(prisma: TxClient, args: CreateVIPArgs) {
+  const { firstName, lastName, email, phone, CRYPT_SECRET } = args
 
-//   const conditions = []
-
-//   if (email) {
-//     conditions.push({ emailHash: hash(email) })
-//   }
-
-//   if (phone) {
-//     conditions.push({ phoneHash: hash(phone) })
-//   }
-
-//   const vip = await prisma.vip.findFirst({
-//     where: {
-//       OR: conditions,
-//     },
-//   })
-
-//   return Boolean(vip)
-// }
+  return prisma.vip.create({
+    data: {
+      firstName: encrypt(firstName, CRYPT_SECRET),
+      lastName: encrypt(lastName, CRYPT_SECRET),
+      email: email ? encrypt(email, CRYPT_SECRET) : undefined,
+      emailHash: email ? hash(email) : undefined,
+      phone: phone ? encrypt(phone, CRYPT_SECRET) : undefined,
+      phoneHash: phone ? hash(phone) : undefined,
+    },
+  })
+}
