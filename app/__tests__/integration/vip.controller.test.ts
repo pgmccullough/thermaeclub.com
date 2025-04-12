@@ -1,10 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { PrismaClient } from '@prisma/client'
 import { hash } from '~/util/tools/encryption/encryption'
-import {
-  userExists,
-  createVIP,
-} from '~/util/prisma/controllers/vip.controller'
+import { userExists, createVIP } from '~/util/prisma/controllers/vip.controller'
 import { withTestTransaction } from '../helpers/withTestTransaction'
 
 const prisma = new PrismaClient()
