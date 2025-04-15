@@ -18,7 +18,7 @@ export const Header = () => {
   useEffect(() => {
     const opacityCalc = scrollPosition / windowHeight / 10
     setHeaderBGOpacity(
-      opacityCalc < 0 ? 0 : opacityCalc > 0.25 ? 0.25 : opacityCalc,
+      opacityCalc < 0 ? 0 : opacityCalc > 0.25 ? 0.25 : opacityCalc
     )
   }, [scrollPosition, setHeaderBGOpacity, windowHeight])
 
@@ -26,7 +26,10 @@ export const Header = () => {
     <>
       <header
         className={styles.header}
-        style={{ backgroundColor: `rgba(0,0,0,${headerBGOpacity})` }}
+        style={{
+          backgroundColor: `rgba(0,0,0,${headerBGOpacity})`,
+          backdropFilter: `blur(${headerBGOpacity * 50}px)`,
+        }}
       >
         <button
           className={styles.menuButton}
